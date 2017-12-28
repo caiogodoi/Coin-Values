@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+	<meta charset="utf-8">
+	<link rel="icon" href="C:\Users\Caio\Desktop\Projeto\bitcoinMatch\pics\bitcoin.jpg">
+	<link rel="stylesheet" href="style.css">
+	<title>Coin Values 💰</title>
+</head>
+
+<body>
+	<div class="title">Coin Values 💰</div>
+	<div id="main" class="main">
+
+	</div>
+</body>
+<script>
+	const endpoint = 'https://api.coinmarketcap.com/v1/ticker/?convert=EUR&limit=18';
+
+	const coins = [];
+	const mainDiv = window.document.getElementById('main');
+	fetch(endpoint)
+		.then(blob => blob.json())
+		.then(data => {
+			coins.push(...data)
+			coins.map(coin => {
+				const symbol = coin.symbol.toLowerCase();
+				const URLImage = `https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/32/icon/${symbol}.png`
+
+				let class1h = "negativo";
+				if (coin.percent_change_1h > 0) {
+					class1h = "positivo"
+				}
+				let class24h = "negativo";
+				if (coin.percent_change_24h > 0) {
+					class24h = "positivo"
+				}
+				let class7d = "negativo";
+				if (coin.percent_change_7d > 0) {
+					class7d = "positivo"
+				}
+
+				const valorDolar = coin.price_usd
+					? `$${Number(Number(coin.price_usd).toFixed(2)).toLocaleString()}`
+					: "-";
+
+				mainDiv.innerHTML += `
+    	<div class="master">
+	    	<div class="coin">
+	    		<div class="coin__image">
+	    			<img src="${URLImage}">
+	    		</div>
+	    		<div class="coin__body">
+		    		<div class="coin__info">
+		    			<div class="coin__item">${coin.symbol}</div>
+		    			<div class="coin__item">${coin.name}</div>
+		    			<div class="coin__item">${valorDolar}</div>
+		    		</div>
+		    		<div class="coin__values">
+		    			<span class="coin__value-item ${class1h}">1h: ${coin.percent_change_1h}%</span>
+		    			<span class="coin__value-item ${class24h}">24h: ${coin.percent_change_24h}%</span>
+		    			<span class="coin__value-item ${class7d}">7d: ${coin.percent_change_7d}%</span>
+		    		</div>
+	    		</div>
+	    	</div>
+    	</div>
+    	`;
+				return coin;
+			});
+		});
+
+</script>
+
+</html>
